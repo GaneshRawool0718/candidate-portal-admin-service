@@ -1,0 +1,1 @@
+# candidate-portal-admin-service
