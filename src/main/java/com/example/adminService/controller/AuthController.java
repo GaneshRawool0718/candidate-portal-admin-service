@@ -1,6 +1,9 @@
 package com.example.adminService.controller;
 
+import com.example.adminService.dto.request.LoginDTO;
 import com.example.adminService.dto.request.UserCreateDTO;
+import com.example.adminService.dto.response.AuthResponse;
+import com.example.adminService.service.AuthService;
 import com.example.adminService.service.SignupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +18,8 @@ public class AuthController {
     // It includes user registration functionality
     
     private final SignupService signupService; // This service handles user registration
-
+    private final AuthService authService;
+    
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody UserCreateDTO dto) {
         // Validate the input DTO
@@ -25,5 +29,12 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginDTO dto) {
+        // Authenticate the user using the provided login credentials
+        // If authentication is successful, return the AuthResponse containing the JWT token and user ID
+        return ResponseEntity.ok(authService.login(dto));
     }
 }

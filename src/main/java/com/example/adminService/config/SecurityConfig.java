@@ -1,37 +1,54 @@
 package com.example.adminService.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.*;
+import org.springframework.security.authentication.*;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.example.adminService.security.JwtAuthFilter;
 
 @Configuration
-@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    // 1. Define password encoder bean
+    /*
+     * This configuration class sets up the security for the application.
+     * It configures the security filter chain, authentication manager, and password encoder.
+     */
+    private final JwtAuthFilter jwtAuthFilter;
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        // Use BCrypt for password encoding
-        // This is a secure way to hash passwords before storing them
-        return new BCryptPasswordEncoder();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // This method configures the security filter chain for the application
+        // It disables CSRF protection, allows public access to signup and login endpoints,
+        return http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/auth/signup", "/auth/login").permitAll()
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
     }
 
-    // 2. Define security filter chain to allow /auth/signup
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Configure HTTP security
-        // This allows public access to the signup endpoint and secures other endpoints
-        http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/signup", "/auth/login").permitAll()
-                        .anyRequest().authenticated()
-                );
+    public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
+        // This method provides the AuthenticationManager bean
+        // It uses the AuthenticationConfiguration to create an instance of AuthenticationManager
+        return config.getAuthenticationManager();
+    }
 
-        return http.build();
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // This method provides the PasswordEncoder bean
+        // It uses BCryptPasswordEncoder to encode passwords securely
+        return new BCryptPasswordEncoder();
     }
 }
