@@ -8,5 +8,5 @@ public class CandidateRequestDTO {
     private String email;
     private String technology;
     private String experience;
+    private Integer score; 
 }
-

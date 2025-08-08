@@ -1,5 +1,6 @@
 package com.example.adminService.model;
 
+import com.example.adminService.enums.CandidateStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,5 +25,13 @@ public class Candidate {
     private String technology;
 
     private String experience;
-}
 
+    @Builder.Default
+    private Integer score = 0;
+
+    @Enumerated(EnumType.STRING)
+    private CandidateStatus status;
+
+    @Builder.Default
+    private boolean statusManuallyUpdated = false;
+}
