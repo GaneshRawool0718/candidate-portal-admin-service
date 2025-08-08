@@ -2,6 +2,7 @@ package com.example.adminService.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,7 +32,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/signup", "/auth/login").permitAll() // public
-                .requestMatchers("/api/register-candidate").authenticated()
+                .requestMatchers("/api/candidates/register").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/candidates/*/score").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/candidates/*/status").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
