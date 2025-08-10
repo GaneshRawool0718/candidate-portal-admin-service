@@ -1,6 +1,7 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/admin_db
+    # Use 'db' as hostname instead of 'localhost' inside Docker Compose network
+    url: jdbc:postgresql://db:5432/admin_db
     username: admin
     password: adminpass
     driver-class-name: org.postgresql.Driver
@@ -15,6 +16,10 @@ spring:
 
   application:
     name: adminService
+
+server:
+  # Listen on all network interfaces inside container
+  address: 0.0.0.0
 
 jwt:
   secret: add_your_secret_key_here
