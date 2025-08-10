@@ -6,6 +6,9 @@ import com.example.adminService.dto.response.AuthResponse;
 import com.example.adminService.service.AuthService;
 import com.example.adminService.service.SignupService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +27,7 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody UserCreateDTO dto) {
         // Validate the input DTO
         try {
-            String result = signupService.register(dto);
+            Map<String, String> result = signupService.register(dto);
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
