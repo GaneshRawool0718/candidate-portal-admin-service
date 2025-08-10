@@ -5,6 +5,9 @@ import com.example.adminService.dto.request.UserCreateDTO;
 import com.example.adminService.model.User;
 import com.example.adminService.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +18,7 @@ public class SignupService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public String register(UserCreateDTO dto) {
+    public Map<String, String> register(UserCreateDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new IllegalArgumentException(SignupConstants.EMAIL_ALREADY_REGISTERED);
         }
@@ -26,6 +29,6 @@ public class SignupService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         userRepository.save(user);
-        return SignupConstants.ADMIN_REGISTERED_SUCCESSFULLY;
+        return Map.of("message", SignupConstants.ADMIN_REGISTERED_SUCCESSFULLY);
     }
 }
